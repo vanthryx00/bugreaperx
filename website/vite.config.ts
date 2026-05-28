@@ -7,36 +7,75 @@ export default defineConfig({
     react(),
     javascriptObfuscator({
       options: {
+        // ─── Basic ──────────────────────────────────────────
         compact: true,
-        controlFlowFlattening: true,
-        controlFlowFlatteningThreshold: 0.75,
-        deadCodeInjection: true,
-        deadCodeInjectionThreshold: 0.4,
-        debugProtection: true,
-        debugProtectionInterval: 2000,
-        disableConsoleOutput: false,
-        identifierNamesGenerator: 'mangled',
         log: false,
-        numbersToExpressions: true,
-        renameGlobals: false,
-        selfDefending: true,
-        simplify: true,
-        splitStrings: true,
-        splitStringsChunkLength: 10,
+        optionsPreset: 'high-obfuscation',
+
+        // ─── Identifier Obfuscation ─────────────────────────
+        identifierNamesGenerator: 'mangled',
+        identifiersPrefix: '_0x',
+        renameGlobals: true,
+
+        // ─── String Protection ──────────────────────────────
         stringArray: true,
         stringArrayCallsTransform: true,
-        stringArrayCallsTransformThreshold: 0.5,
+        stringArrayCallsTransformThreshold: 1.0,
         stringArrayEncoding: ['rc4', 'base64'],
         stringArrayIndexShift: true,
         stringArrayRotate: true,
         stringArrayShuffle: true,
-        stringArrayWrappersCount: 5,
         stringArrayWrappersChainedCalls: true,
-        stringArrayWrappersParametersMaxCount: 4,
+        stringArrayWrappersCount: 10,
+        stringArrayWrappersParametersMaxCount: 10,
         stringArrayWrappersType: 'function',
-        stringArrayThreshold: 0.75,
+        stringArrayThreshold: 1.0,
+
+        // ─── Control Flow ───────────────────────────────────
+        controlFlowFlattening: true,
+        controlFlowFlatteningThreshold: 0.9,
+
+        // ─── Dead Code Injection ────────────────────────────
+        deadCodeInjection: true,
+        deadCodeInjectionThreshold: 0.8,
+
+        // ─── Numbers & Expressions ──────────────────────────
+        numbersToExpressions: true,
+        simplify: true,
+
+        // ─── String Splitting ───────────────────────────────
+        splitStrings: true,
+        splitStringsChunkLength: 3,
+
+        // ─── Object Transform ───────────────────────────────
         transformObjectKeys: true,
+
+        // ─── Unicode Escape (double encoding) ───────────────
         unicodeEscapeSequence: true,
+
+        // ─── Domain Lock (CLONE KILLER) ─────────────────────
+        domainLock: ['bugreaper-x.ca', 'www.bugreaper-x.ca', 'bugreaperx.vercel.app', 'localhost'],
+        domainLockRedirectUrl: 'https://bugreaper-x.ca',
+
+        // ─── Self-Defending ─────────────────────────────────
+        selfDefending: true,
+
+        // ─── Debug Protection ───────────────────────────────
+        debugProtection: true,
+        debugProtectionInterval: 2000,
+
+        // ─── Console Protection ─────────────────────────────
+        disableConsoleOutput: false, // We manage console ourselves
+
+        // ─── Source Maps (DISABLED - security) ──────────────
+        sourceMap: false,
+        sourceMapBaseUrl: '',
+        sourceMapMode: 'inline',
+
+        // ─── Misc ───────────────────────────────────────────
+        ignoreRequireImports: false,
+        preventDebug: true,
+        reservedNames: ['BugReaperX', 'bugreaper'],
       },
     }),
   ],
@@ -46,16 +85,18 @@ export default defineConfig({
     esbuild: {
       drop: [],
       legalComments: 'none',
-      keepNames: true,
+      keepNames: false,
     },
     rollupOptions: {
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
-          honeypot: ['./src/lib/honeypot.ts'],
+          protection: ['./src/lib/honeypot.ts', './src/lib/anticlone.ts'],
         },
       },
     },
+    // Increase chunk size limit since obfuscation inflates code
+    chunkSizeWarningLimit: 1000,
   },
   define: {
     __BUILD_TIME__: JSON.stringify(new Date().toISOString()),

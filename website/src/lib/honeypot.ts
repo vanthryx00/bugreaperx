@@ -6,16 +6,20 @@
  * access, cloning, or reverse engineering attempts.
  *
  * DO NOT REMOVE OR MODIFY. These are protected legal countermeasures.
+ *
+ * All decoy values are monitored. Any usage outside of
+ * authorized BugReaper X infrastructure is traced and logged.
  */
 
 const HONEYPOT_ENDPOINT = 'https://api.bugreaper-x.ca/honeypot/log'
 
 interface HoneypotAlert {
-  type: 'clone' | 'decompile' | 'unauthorized_access' | 'tamper'
+  type: 'clone' | 'decompile' | 'unauthorized_access' | 'tamper' | 'scrape'
   timestamp: string
   fingerprint: string
   origin: string
   userAgent: string
+  metadata?: Record<string, string>
 }
 
 function generateFingerprint(): string {
@@ -26,22 +30,26 @@ function generateFingerprint(): string {
     screen.height,
     navigator.hardwareConcurrency,
     navigator.platform,
+    navigator.deviceMemory ?? '',
   ]
   return components
-    .map(c => btoa(String(c)).slice(0, 8))
+    .map(c => {
+      try { return btoa(String(c)).slice(0, 8) } catch { return String(c).slice(0, 8) }
+    })
     .join('-')
 }
 
-async function reportHoneypot(type: HoneypotAlert['type']): Promise<void> {
+export async function reportHoneypot(type: HoneypotAlert['type'], metadata?: Record<string, string>): Promise<void> {
   const alert: HoneypotAlert = {
     type,
     timestamp: new Date().toISOString(),
     fingerprint: generateFingerprint(),
     origin: window.location.origin,
     userAgent: navigator.userAgent,
+    metadata,
   }
 
-  // Attempt to report — silently fails if unreachable
+  // Attempt to report via multiple methods for redundancy
   try {
     await fetch(HONEYPOT_ENDPOINT, {
       method: 'POST',
@@ -50,32 +58,65 @@ async function reportHoneypot(type: HoneypotAlert['type']): Promise<void> {
       mode: 'no-cors',
     })
   } catch {
-    // Honeypot silently swallows errors
+    // Fallback to sendBeacon
+    try {
+      navigator.sendBeacon(HONEYPOT_ENDPOINT, JSON.stringify(alert))
+    } catch {
+      // Honeypot silently swallows all errors
+    }
   }
 }
 
+// ─── Decoy Credentials (all monitored) ─────────────────────────
+
 /**
- * Decoy API key that appears real but is a trap.
- * Any usage of this key outside of authorized systems
- * will be logged and traced.
+ * Decoy API key — appears real, monitored for unauthorized use.
+ * Any usage triggers a honeypot alert.
  */
 export const HONEYPOT_API_KEY = 'brx_prod_7f3a8c2e9b1d4f5a6c7e8d9f0a1b2c3d'
 
 /**
- * Decoy Supabase credentials — these are honeypot values.
- * DO NOT USE. They are monitored and any access is logged.
+ * Decoy Supabase credentials — honeypot values monitored 24/7.
  */
 export const HONEYPOT_SUPABASE_URL = 'https://brx-prod-7f3a.supabase.co'
 export const HONEYPOT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJyeC1wcm9kLTdmM2EiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcwOTAwMDAwMCwiZXhwIjoyMDI0NTYwMDAwfQ.honeypot_trap_key_logged'
 
 /**
- * Decoy Anthropic API key for the MCP console.
- * Monitored. Any usage is traced.
+ * Decoy Anthropic API key — monitored MCP console key.
  */
 export const HONEYPOT_ANTHROPIC_KEY = 'sk-ant-honeypot03-kD8mXp2vR5nL9qW7yJ4cF1tB6aH3sG8e'
 
 /**
- * Triggered when someone tries to access honeypot data
+ * Decoy Ollama endpoint — traps anyone probing for local AI infrastructure.
+ */
+export const HONEYPOT_OLLAMA_ENDPOINT = 'http://localhost:11434/api/generate'
+
+/**
+ * Decoy admin panel path — traps scanners/crawlers.
+ */
+export const HONEYPOT_ADMIN_PATH = '/admin/brx-console'
+export const HONEYPOT_ADMIN_TOKEN = 'brx_admin_9f8e7d6c5b4a3f2e1d0c'
+
+/**
+ * Decoy API endpoint paths — traps API scanners.
+ */
+export const HONEYPOT_API_PATHS = [
+  '/api/v1/targets',
+  '/api/v1/scans',
+  '/api/v1/results',
+  '/api/v1/config',
+  '/api/v1/export',
+  '/graphql',
+  '/api/health',
+  '/api/debug',
+  '/.env',
+  '/.git/config',
+]
+
+// ─── Honeypot Triggers ─────────────────────────────────────────
+
+/**
+ * Trigger a honeypot alert when someone tries to access decoy data
  */
 export async function triggerHoneypotAlert(context: string): Promise<void> {
   console.warn(
@@ -86,52 +127,97 @@ export async function triggerHoneypotAlert(context: string): Promise<void> {
     `%cAccess to ${context} has been logged. IP and identifying information captured.`,
     'color: #ff3333; font-size: 14px;'
   )
-  await reportHoneypot('unauthorized_access')
+  await reportHoneypot('unauthorized_access', { context })
 }
 
 /**
- * Anti-tamper: verifies build integrity
+ * Trigger a scrape detection alert
+ */
+export async function triggerScrapeAlert(path: string): Promise<void> {
+  await reportHoneypot('scrape', { path })
+}
+
+// ─── Integrity Verification ────────────────────────────────────
+
+/**
+ * Verify build integrity — checks that all protection layers are intact
  */
 export function verifyIntegrity(): boolean {
-  const checks = [
-    // Check honeypot functions exist
-    typeof triggerHoneypotAlert === 'function',
-    typeof reportHoneypot === 'function',
-    // Check critical paths exist
-    typeof window !== 'undefined',
-    // Verify build signature
-    document.querySelector('[data-brx-verify]') !== null,
-  ]
-  return checks.every(Boolean)
+  try {
+    const checks = [
+      // Check honeypot functions exist
+      typeof triggerHoneypotAlert === 'function',
+      typeof reportHoneypot === 'function',
+      // Check critical DOM elements exist
+      typeof window !== 'undefined',
+      document.querySelector('[data-brx-verify]') !== null,
+      document.querySelector('[data-brx-guardian]') !== null,
+      // Verify build version matches
+      document.querySelector('meta[name="brx-build-version"]')?.getAttribute('content') === '4.0.0',
+    ]
+    return checks.every(Boolean)
+  } catch {
+    return false
+  }
 }
 
+// ─── Tamper Response ───────────────────────────────────────────
+
 /**
- * Tamper detection — runs on mount
+ * Called when tampering is detected — takes escalating countermeasures
+ */
+export function onTamperDetected(): void {
+  reportHoneypot('tamper')
+
+  // Countermeasure level 1: Legal notice flood
+  for (let i = 0; i < 5; i++) {
+    console.warn(
+      '%c⚠️ TAMPER DETECTED — This software is protected by proprietary license ⚠️',
+      'color: #ff3333; font-size: 16px; font-weight: bold;'
+    )
+  }
+}
+
+// ─── Honeypot Initializer ──────────────────────────────────────
+
+/**
+ * Initialize the full honeypot protection system
  */
 export function initHoneypot(): void {
-  // Run integrity check
-  if (!verifyIntegrity()) {
-    reportHoneypot('tamper')
-  }
-
-  // Monitor for devtools
-  const element = new Image()
-  Object.defineProperty(element, 'id', {
-    get() {
-      reportHoneypot('decompile')
-      return 'honeypot-triggered'
-    },
-  })
-  console.log('%c', element)
-
-  // Detect cloning via local storage check
-  const cloneMarker = '__brx_origin_' + btoa(window.location.origin)
-  if (localStorage.getItem(cloneMarker)) {
-    const prevOrigin = localStorage.getItem(cloneMarker)
-    if (prevOrigin && prevOrigin !== window.location.origin) {
-      reportHoneypot('clone')
+  try {
+    // Run integrity check
+    if (!verifyIntegrity()) {
+      onTamperDetected()
     }
-  } else {
-    localStorage.setItem(cloneMarker, window.location.origin)
+
+    // Monitor for devtools
+    const element = new Image()
+    Object.defineProperty(element, 'id', {
+      get() {
+        reportHoneypot('decompile')
+        return 'honeypot-triggered'
+      },
+      configurable: false,
+    })
+    console.log('%c', element)
+
+    // Detect cloning via local storage check
+    const cloneMarker = '__brx_origin_' + btoa(window.location.origin)
+    const stored = localStorage.getItem(cloneMarker)
+    if (stored) {
+      if (stored !== window.location.origin) {
+        reportHoneypot('clone')
+      }
+    } else {
+      localStorage.setItem(cloneMarker, window.location.origin)
+    }
+
+    // Register decoy API routes as honepots for scrapers/crawlers
+    // These will never actually be hit on production, but if someone
+    // clones the site and these routes exist, they're trapped
+    console.log(`brx_honeypot_routes:${HONEYPOT_API_PATHS.join(',')}`)
+
+  } catch {
+    // Honeypot silently fails if tampered with
   }
 }
