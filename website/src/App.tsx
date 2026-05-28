@@ -2,11 +2,12 @@ import { useState, lazy, Suspense } from 'react'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { AudioEngineProvider } from './components/AudioEngine'
 import { AudioToggle } from './components/AudioToggle'
+import { AudioVisualizerBar } from './components/AudioVisualizer'
 import { Navbar } from './components/Navbar'
 import { Hero } from './components/Hero'
 import { Features } from './components/Features'
 import { ArsenalShowcase } from './components/ArsenalShowcase'
-import { VerseSection } from './components/VerseSection'
+import { VerseFullTrack } from './components/VerseFullTrack'
 import { ArsenalMethodology } from './components/ArsenalMethodology'
 import { Stats } from './components/Stats'
 import { Download } from './components/Download'
@@ -48,6 +49,7 @@ export default function App() {
             <GameView />
           </Suspense>
           <AudioToggle />
+          <AudioVisualizerBar />
         </AudioEngineProvider>
       </ErrorBoundary>
     )
@@ -64,13 +66,14 @@ export default function App() {
           <Stats />
           <Features />
           <ArsenalShowcase />
-          <VerseSection />
+          <VerseFullTrack />
           <ArsenalMethodology />
           <Testimonials />
           <Download />
           <Footer />
         </div>
         <AudioToggle />
+        <AudioVisualizerBar />
       </AudioEngineProvider>
     </div>
   )

@@ -3,10 +3,18 @@ import { createContext, useContext, useRef, useState, useCallback, useEffect, ty
 // ─── Types ──────────────────────────────────────────────────
 export type BrainwaveMode = 'off' | 'beta' | 'alpha' | 'theta' | 'gamma'
 
+export interface AudioFrameData {
+  frequencies: Uint8Array<ArrayBuffer>
+  waveform: Uint8Array<ArrayBuffer>
+  beat: number
+  timestamp: number
+}
+
 interface AudioEngineState {
   mode: BrainwaveMode
   isPlaying: boolean
   volume: number
+  frameData: AudioFrameData | null
   setMode: (mode: BrainwaveMode) => void
   togglePlay: () => void
   setVolume: (vol: number) => void
@@ -16,6 +24,7 @@ const AudioContext = createContext<AudioEngineState>({
   mode: 'off',
   isPlaying: false,
   volume: 0.35,
+  frameData: null,
   setMode: () => {},
   togglePlay: () => {},
   setVolume: () => {},
@@ -38,6 +47,7 @@ class BinauralEngine {
   rightOsc: OscillatorNode | null = null
   droneOsc: OscillatorNode | null = null
   subDroneOsc: OscillatorNode | null = null
+  analyserNode: AnalyserNode | null = null
   noiseSource: AudioBufferSourceNode | null = null
   noiseGain: GainNode | null = null
   masterGain: GainNode | null = null
@@ -52,6 +62,10 @@ class BinauralEngine {
   currentMode: Exclude<BrainwaveMode, 'off'> = 'beta'
   noiseBuffer: AudioBuffer | null = null
   isRunning = false
+  
+  // Pre-allocated buffers for visualizer
+  frequencyBuffer: Uint8Array<ArrayBuffer> = new Uint8Array(0) as unknown as Uint8Array<ArrayBuffer>
+  waveformBuffer: Uint8Array<ArrayBuffer> = new Uint8Array(0) as unknown as Uint8Array<ArrayBuffer>
 
   async init() {
     this.ctx = new (window.AudioContext || (window as any).webkitAudioContext)() as AudioContext
@@ -141,6 +155,15 @@ class BinauralEngine {
     // Noise -> master
     this.noiseGain.connect(this.masterGain)
 
+    // ── Analyser for visualizer ──
+    this.analyserNode = ctx.createAnalyser()
+    this.analyserNode.fftSize = 256
+    this.analyserNode.smoothingTimeConstant = 0.8
+    this.frequencyBuffer = new Uint8Array(this.analyserNode.frequencyBinCount) as unknown as Uint8Array<ArrayBuffer>
+    this.waveformBuffer = new Uint8Array(this.analyserNode.frequencyBinCount) as unknown as Uint8Array<ArrayBuffer>
+
+    // Tap master output through analyser
+    this.masterGain.connect(this.analyserNode)
     this.masterGain.connect(ctx.destination)
 
     this.isRunning = true
@@ -243,6 +266,20 @@ class BinauralEngine {
     this.ctx = null
   }
 
+  getFrameData(): AudioFrameData {
+    const analyser = this.analyserNode
+    if (analyser) {
+      analyser.getByteFrequencyData(this.frequencyBuffer)
+      analyser.getByteTimeDomainData(this.waveformBuffer)
+    }
+    return {
+      frequencies: this.frequencyBuffer,
+      waveform: this.waveformBuffer,
+      beat: FREQ_CONFIG[this.currentMode]?.beat ?? 0,
+      timestamp: performance.now(),
+    }
+  }
+
   setVolume(vol: number) {
     if (this.masterGain) {
       this.masterGain.gain.value = Math.max(0, Math.min(1, vol))
@@ -256,13 +293,21 @@ export function AudioEngineProvider({ children }: { children: ReactNode }) {
   const [mode, setModeState] = useState<BrainwaveMode>('off')
   const [isPlaying, setIsPlaying] = useState(false)
   const [volume, setVolumeState] = useState(0.35)
+  const [frameData, setFrameData] = useState<AudioFrameData | null>(null)
+  const frameIdRef = useRef<number>(0)
+  const isInitializingRef = useRef(false)
 
   // Initialize audio context on first user interaction
   const ensureInit = useCallback(async () => {
-    if (engineRef.current?.isRunning) return
-    const engine = new BinauralEngine()
-    await engine.init()
-    engineRef.current = engine
+    if (engineRef.current?.isRunning || isInitializingRef.current) return
+    isInitializingRef.current = true
+    try {
+      const engine = new BinauralEngine()
+      await engine.init()
+      engineRef.current = engine
+    } finally {
+      isInitializingRef.current = false
+    }
   }, [])
 
   const setMode = useCallback((newMode: BrainwaveMode) => {
@@ -316,15 +361,38 @@ export function AudioEngineProvider({ children }: { children: ReactNode }) {
     setVolumeState(vol)
   }, [])
 
+  // Frame loop for visualizer data
+  const frameLoop = useCallback(() => {
+    const engine = engineRef.current
+    if (engine?.isRunning) {
+      setFrameData(engine.getFrameData())
+      frameIdRef.current = requestAnimationFrame(frameLoop)
+    }
+  }, [])
+
+  // Start/stop frame loop based on isPlaying
+  useEffect(() => {
+    if (isPlaying && engineRef.current?.isRunning) {
+      frameIdRef.current = requestAnimationFrame(frameLoop)
+    }
+    return () => {
+      if (frameIdRef.current) {
+        cancelAnimationFrame(frameIdRef.current)
+        frameIdRef.current = 0
+      }
+    }
+  }, [isPlaying, frameLoop])
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
+      if (frameIdRef.current) cancelAnimationFrame(frameIdRef.current)
       engineRef.current?.stop()
     }
   }, [])
 
   return (
-    <AudioContext.Provider value={{ mode, isPlaying, volume, setMode, togglePlay, setVolume }}>
+    <AudioContext.Provider value={{ mode, isPlaying, volume, frameData, setMode, togglePlay, setVolume }}>
       {children}
     </AudioContext.Provider>
   )

@@ -6,8 +6,18 @@ import { HeroCreation } from './HeroCreation'
 import { WalletPanel } from './WalletPanel'
 import { ShopPanel } from './ShopPanel'
 import { CombatPanel } from './CombatPanel'
+import { GameAudioIntegration } from '../GameAudioIntegration'
 
 export function GameView() {
+  return (
+    <>
+      <GameAudioIntegration />
+      <GameViewInner />
+    </>
+  )
+}
+
+function GameViewInner() {
   const screen = useGameStore(s => s.screen)
   const setScreen = useGameStore(s => s.setScreen)
   const initGame = useGameStore(s => s.initGame)
