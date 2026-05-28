@@ -15,6 +15,9 @@ export const navItems: NavItem[] = [
   { id: 'vault', label: 'Vault', icon: 'eye', path: '/vault', badge: 'SECURE' },
   { id: 'collab', label: 'Collab Lab', icon: 'radio', path: '/collab', badge: 'LIVE' },
   { id: 'secrets', label: 'Secrets', icon: 'eye', path: '/secrets' },
+  { id: 'sessions', label: 'Sessions', icon: 'radio', path: '/sessions', badge: 'REC' },
+  { id: 'sentry', label: 'Sentry', icon: 'eye', path: '/sentry', badge: 'MON' },
+  { id: 'wallet', label: 'Wallet', icon: 'file-text', path: '/wallet' },
   { id: 'reports', label: 'Reports', icon: 'file-text', path: '/reports' },
   { id: 'settings', label: 'Settings', icon: 'settings', path: '/settings' },
 ]

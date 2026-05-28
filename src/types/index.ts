@@ -229,6 +229,118 @@ export interface TOTPConfig {
   backupCodes: string[]
 }
 
+// ─── Sentry / Monitoring Types ───────────────────────────────
+export interface SentryAlert {
+  id: string
+  name: string
+  description: string
+  severity: 'critical' | 'high' | 'medium' | 'info'
+  source: string
+  condition: string
+  threshold: number
+  active: boolean
+  lastTriggered: string | null
+}
+
+export interface NotificationChannel {
+  id: string
+  name: string
+  type: 'discord' | 'slack' | 'telegram' | 'email' | 'webhook'
+  webhookUrl: string
+  active: boolean
+  events: string[]
+  lastSent: string | null
+}
+
+export interface SystemHealthMetric {
+  id: string
+  label: string
+  status: 'healthy' | 'degraded' | 'down' | 'unknown'
+  uptime: number
+  lastCheck: string
+  details: string
+}
+
+export interface WalletEntry {
+  id: string
+  programName: string
+  platform: 'hackerone' | 'bugcrowd' | 'intigriti' | 'self-managed'
+  amount: number
+  currency: 'USD'
+  type: 'earned' | 'pending' | 'paid'
+  findingTitle: string
+  severity: string
+  date: string
+  notes: string
+}
+
+// ─── Session Recording Types ────────────────────────────────
+export interface SessionRecording {
+  id: string
+  name: string
+  target: string
+  startTime: string
+  endTime: string | null
+  duration: number
+  entries: number
+  status: 'active' | 'paused' | 'completed'
+}
+
+export interface SessionEntry {
+  id: string
+  timestamp: string
+  type: 'tool-run' | 'request' | 'finding' | 'screenshot' | 'note' | 'command' | 'file-change'
+  source: string
+  summary: string
+  details: string
+  severity?: 'info' | 'warning' | 'critical'
+}
+
+// ─── Workbench / Playbook Types ─────────────────────────────
+export interface WorkbenchStation {
+  id: string
+  name: string
+  tool: string
+  category: string
+  order: number
+  config: Record<string, string>
+}
+
+export interface Playbook {
+  id: string
+  name: string
+  description: string
+  stations: string[]
+  createdAt: string
+  updatedAt: string
+  runCount: number
+}
+
+export interface Workbench {
+  id: string
+  name: string
+  target: string
+  status: 'idle' | 'active' | 'paused' | 'completed'
+  stations: WorkbenchStation[]
+  playbook: string | null
+  notes: string
+  tags: string[]
+  createdAt: string
+  lastActive: string
+  progress: number
+  entryCount: number
+}
+
+export interface AuditLogEntry {
+  id: string
+  timestamp: string
+  level: 'info' | 'success' | 'warning' | 'error' | 'critical'
+  source: string
+  message: string
+  details: string
+  workbenchId: string | null
+}
+
 // ─── Collab Lab Types ──────────────────────────────────────
 export interface CollabSession {
   id: string

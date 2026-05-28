@@ -14,6 +14,9 @@ import { AdventurePage } from './pages/Adventure'
 import { VaultPage } from './pages/Vault'
 import { CollabPage } from './pages/Collab'
 import { SecretsPage } from './pages/Secrets'
+import { SessionsPage } from './pages/Sessions'
+import { SentryPage } from './pages/Sentry'
+import { WalletPage } from './pages/Wallet'
 import { ReportsPage } from './pages/Reports'
 import { SettingsPage } from './pages/Settings'
 
@@ -71,9 +74,12 @@ export default function App() {
       case '/adventure': return <AdventurePage />
       case '/vault': return <VaultPage />
       case '/collab': return <CollabPage />
-      case '/secrets': return <SecretsPage />
-      case '/reports': return <ReportsPage />
-      case '/settings': return <SettingsPage />
+  case '/secrets': return <SecretsPage />
+  case '/sessions': return <SessionsPage />
+  case '/sentry': return <SentryPage />
+  case '/wallet': return <WalletPage />
+  case '/reports': return <ReportsPage />
+  case '/settings': return <SettingsPage />
       default: return <DashboardPage />
     }
   }
