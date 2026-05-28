@@ -169,3 +169,100 @@ export interface FrictionItem {
   checked: boolean
   icon: string
 }
+
+// ─── Adventure Mode Types ──────────────────────────────────
+export interface AdventureProfile {
+  xp: number
+  level: number
+  streak: number
+  longestStreak: number
+  lastSprintDate: string | null
+  totalSprintsCompleted: number
+  totalPhasesCompleted: number
+  badges: Badge[]
+  unlockedProtocols: string[]
+  xpToNextLevel: number
+}
+
+export interface Badge {
+  id: string
+  name: string
+  description: string
+  icon: string
+  unlockedAt: string | null
+  condition: (profile: AdventureProfile) => boolean
+}
+
+export interface LevelTier {
+  level: number
+  title: string
+  icon: string
+  color: string
+  xpRequired: number
+}
+
+// ─── Privacy Vault Types ───────────────────────────────────
+export interface VaultEntry {
+  id: string
+  title: string
+  category: 'credential' | 'note' | 'api-key' | 'recovery' | 'payment'
+  encryptedData: string // AES-GCM encrypted JSON
+  iv: string // Base64 IV
+  createdAt: string
+  updatedAt: string
+  favorite: boolean
+}
+
+export interface VaultSession {
+  locked: boolean
+  unlockedAt: string | null
+  lastActivity: string
+  timeoutMinutes: number
+  totpEnabled: boolean
+  totpVerified: boolean
+  masterPasswordSet: boolean
+}
+
+export interface TOTPConfig {
+  secret: string
+  verified: boolean
+  backupCodes: string[]
+}
+
+// ─── Collab Lab Types ──────────────────────────────────────
+export interface CollabSession {
+  id: string
+  name: string
+  peerId: string
+  peers: CollabPeer[]
+  language: string
+  code: string
+  createdAt: string
+  active: boolean
+}
+
+export interface CollabPeer {
+  id: string
+  name: string
+  color: string
+  cursor: CollabCursor | null
+  connected: boolean
+  joinedAt: string
+}
+
+export interface CollabCursor {
+  line: number
+  column: number
+  selectionStart?: { line: number; column: number }
+  selectionEnd?: { line: number; column: number }
+}
+
+export interface CollabMessage {
+  id: string
+  peerId: string
+  peerName: string
+  type: 'code-change' | 'cursor-move' | 'chat' | 'peer-join' | 'peer-leave'
+  content: string
+  timestamp: string
+  cursor?: CollabCursor
+}
