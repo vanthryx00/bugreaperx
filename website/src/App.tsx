@@ -1,9 +1,13 @@
 import { useState, lazy, Suspense } from 'react'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { AudioEngineProvider } from './components/AudioEngine'
+import { AudioToggle } from './components/AudioToggle'
 import { Navbar } from './components/Navbar'
 import { Hero } from './components/Hero'
 import { Features } from './components/Features'
 import { ArsenalShowcase } from './components/ArsenalShowcase'
+import { VerseSection } from './components/VerseSection'
+import { ArsenalMethodology } from './components/ArsenalMethodology'
 import { Stats } from './components/Stats'
 import { Download } from './components/Download'
 import { Testimonials } from './components/Testimonials'
@@ -39,9 +43,12 @@ export default function App() {
   if (gameMode) {
     return (
       <ErrorBoundary>
-        <Suspense fallback={<GameLoadingPlaceholder />}>
-          <GameView />
-        </Suspense>
+        <AudioEngineProvider>
+          <Suspense fallback={<GameLoadingPlaceholder />}>
+            <GameView />
+          </Suspense>
+          <AudioToggle />
+        </AudioEngineProvider>
       </ErrorBoundary>
     )
   }
@@ -50,16 +57,21 @@ export default function App() {
     <div className="relative min-h-screen bg-hacker-bg text-hacker-text overflow-hidden">
       <ParticleBackground />
       <div className="scanline" />
-      <div className="relative z-10">
-        <Navbar onPlayGame={() => setGameMode(true)} />
-        <Hero />
-        <Stats />
-        <Features />
-        <ArsenalShowcase />
-        <Testimonials />
-        <Download />
-        <Footer />
-      </div>
+      <AudioEngineProvider>
+        <div className="relative z-10">
+          <Navbar onPlayGame={() => setGameMode(true)} />
+          <Hero />
+          <Stats />
+          <Features />
+          <ArsenalShowcase />
+          <VerseSection />
+          <ArsenalMethodology />
+          <Testimonials />
+          <Download />
+          <Footer />
+        </div>
+        <AudioToggle />
+      </AudioEngineProvider>
     </div>
   )
 }

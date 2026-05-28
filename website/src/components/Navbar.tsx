@@ -7,6 +7,8 @@ interface NavbarProps {
 const navLinks = [
   { href: '#features', label: 'Features' },
   { href: '#arsenal', label: 'Arsenal' },
+  { href: '#verse', label: 'Verse' },
+  { href: '#methodology', label: 'Playbook' },
   { href: '#testimonials', label: 'Community' },
   { href: '#download', label: 'Download' },
 ]
