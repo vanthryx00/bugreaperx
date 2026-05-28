@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react'
 
+interface NavbarProps {
+  onPlayGame?: () => void
+}
+
 const navLinks = [
   { href: '#features', label: 'Features' },
   { href: '#arsenal', label: 'Arsenal' },
@@ -7,7 +11,7 @@ const navLinks = [
   { href: '#download', label: 'Download' },
 ]
 
-export function Navbar() {
+export function Navbar({ onPlayGame }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState('')
 
@@ -68,6 +72,15 @@ export function Navbar() {
                 )}
               </a>
             ))}
+            {onPlayGame && (
+              <button
+                onClick={onPlayGame}
+                className="group relative px-4 py-2 bg-hacker-amber/10 border border-hacker-amber/30 rounded-lg text-sm font-semibold text-hacker-amber hover:bg-hacker-amber/20 hover:shadow-[0_0_15px_rgba(250,176,5,0.15)] transition-all duration-200 overflow-hidden"
+              >
+                <span className="relative z-10">Play Game 🎮</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-hacker-amber/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+              </button>
+            )}
             <a
               href="#download"
               className="group relative px-4 py-2 bg-hacker-green/10 border border-hacker-green/30 rounded-lg text-sm font-semibold text-hacker-green hover:bg-hacker-green/20 hover:shadow-[0_0_15px_rgba(0,255,65,0.15)] transition-all duration-200 overflow-hidden"

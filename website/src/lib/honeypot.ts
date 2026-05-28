@@ -30,7 +30,7 @@ function generateFingerprint(): string {
     screen.height,
     navigator.hardwareConcurrency,
     navigator.platform,
-    navigator.deviceMemory ?? '',
+    (navigator as unknown as Record<string, unknown>).deviceMemory ?? '',
   ]
   return components
     .map(c => {

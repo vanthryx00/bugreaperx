@@ -66,7 +66,7 @@ function detectDevtoolsMethod3(): boolean {
     // Silently fail
   }
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if ((window as Record<string, unknown>).firebug !== undefined) {
+  if ((window as unknown as Record<string, unknown>).firebug !== undefined) {
     return true
   }
   return false
