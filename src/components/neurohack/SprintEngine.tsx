@@ -104,6 +104,12 @@ export function SprintEngine() {
   const [frictionChecked, setFrictionChecked] = useState<string[]>([])
   const [showFriction, setShowFriction] = useState(true)
   const [phaseOutput, setPhaseOutput] = useState('')
+  const [completedSprints, setCompletedSprints] = useState<NeurohackSprint[]>(() => {
+    try {
+      const saved = localStorage.getItem('neurohack_history')
+      return saved ? JSON.parse(saved) : []
+    } catch { return [] }
+  })
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const timerStartRef = useRef<number>(0)
   const flashTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -171,6 +177,10 @@ export function SprintEngine() {
       updated.completed = true
       updated.completed_at = new Date().toISOString()
       stopTimer()
+      // Persist to localStorage
+      const history = [updated, ...completedSprints].slice(0, 20)
+      setCompletedSprints(history)
+      try { localStorage.setItem('neurohack_history', JSON.stringify(history)) } catch {}
     }
 
     const newMomentum = Math.min(momentumScore + 10, 100)
@@ -199,6 +209,10 @@ export function SprintEngine() {
       updated.completed = true
       updated.completed_at = new Date().toISOString()
       stopTimer()
+      // Persist to localStorage
+      const history = [updated, ...completedSprints].slice(0, 20)
+      setCompletedSprints(history)
+      try { localStorage.setItem('neurohack_history', JSON.stringify(history)) } catch {}
     }
     setSprint(updated)
     setPhaseOutput('')
@@ -546,12 +560,69 @@ export function SprintEngine() {
               <span className="text-hacker-text-dim text-lg">◻</span>
               <h3 className="text-xs font-mono text-hacker-text">SPRINT HISTORY</h3>
             </div>
-            <button onClick={() => setActiveView('select')} className="hacker-btn-primary text-[9px]">SPRINT AGAIN</button>
+            <div className="flex items-center gap-2">
+              <span className="text-[9px] font-mono text-hacker-text-dim/50">{completedSprints.length} total</span>
+              <button onClick={() => setActiveView('select')} className="hacker-btn-primary text-[9px]">SPRINT AGAIN</button>
+            </div>
           </div>
-          <div className="text-center py-8">
-            <span className="text-2xl block mb-2">⚡</span>
-            <p className="text-[10px] font-mono text-hacker-text-dim/50">No completed sprints yet. Complete a sprint to see it here.</p>
-          </div>
+          {completedSprints.length === 0 ? (
+            <div className="text-center py-8">
+              <span className="text-2xl block mb-2">⚡</span>
+              <p className="text-[10px] font-mono text-hacker-text-dim/50">No completed sprints yet. Complete a sprint to see it here.</p>
+            </div>
+          ) : (
+            <div className="space-y-1.5 max-h-64 overflow-y-auto">
+              {completedSprints.map((s) => {
+                const protocol = PROTOCOLS.find(p => p.id === s.protocol_id)
+                const completedPhases = s.phases.filter(p => p.completed).length
+                return (
+                  <div key={s.id} className="flex items-center gap-3 px-3 py-2 rounded bg-hacker-bg/30 hover:bg-hacker-bg/50 transition-colors">
+                    <span className={protocol?.color.split(' ')[0] || 'text-hacker-text-dim'}>{protocol?.icon || '⚡'}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-mono text-hacker-text truncate">{s.topic}</span>
+                        <span className="text-[7px] font-mono px-1 py-0.5 rounded bg-hacker-green/10 text-hacker-green">{completedPhases}/{s.phases.length}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-[8px] font-mono text-hacker-text-dim/50">
+                        <span>{protocol?.name || 'Custom'}</span>
+                        <span>·</span>
+                        <span>Momentum: {s.momentum_score}%</span>
+                        <span>·</span>
+                        <span>{new Date(s.completed_at || s.started_at).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                    {/* Mini phase bar */}
+                    <div className="flex gap-0.5 w-16">
+                      {s.phases.map((ph, i) => (
+                        <div
+                          key={i}
+                          className={cn(
+                            'flex-1 h-1 rounded',
+                            ph.completed ? 'bg-hacker-green' : 'bg-hacker-surface2'
+                          )}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+          {/* Clear button */}
+          {completedSprints.length > 0 && (
+            <div className="mt-3 pt-3 border-t border-hacker-border/50 flex items-center justify-between">
+              <span className="text-[8px] font-mono text-hacker-text-dim/50">Max 20 sprints stored locally</span>
+              <button
+                onClick={() => {
+                  setCompletedSprints([])
+                  try { localStorage.removeItem('neurohack_history') } catch {}
+                }}
+                className="text-[8px] font-mono text-hacker-text-dim/40 hover:text-hacker-red transition-colors"
+              >
+                CLEAR ALL
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
