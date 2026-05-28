@@ -24,6 +24,7 @@ export default {
       fontFamily: {
         mono: ['"JetBrains Mono"', '"Fira Code"', 'monospace'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Orbitron', '"JetBrains Mono"', 'monospace'],
       },
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
@@ -36,6 +37,16 @@ export default {
         'grid-scroll': 'gridScroll 20s linear infinite',
         'scanline': 'scanline 8s linear infinite',
         'typing': 'typing 3s steps(30) 1s forwards',
+        'glitch-fast': 'glitch 0.3s ease-in-out',
+        'glitch-slow': 'glitchSlow 4s ease-in-out infinite',
+        'data-stream': 'dataStream 2s linear infinite',
+        'pulse-ring': 'pulseRing 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'scan-beam': 'scanBeam 3s ease-in-out infinite',
+        'matrix-rain': 'matrixRain 10s linear infinite',
+        'terminal-blink': 'terminalBlink 0.5s step-end infinite',
+        'cyber-slide': 'cyberSlide 0.8s ease-out forwards',
+        'reveal': 'reveal 0.5s ease-out forwards',
+        'shimmer': 'shimmer 3s ease-in-out infinite',
       },
       keyframes: {
         glow: {
@@ -69,6 +80,57 @@ export default {
         typing: {
           'from': { width: '0' },
           'to': { width: '100%' },
+        },
+        glitch: {
+          '0%': { transform: 'translate(0)' },
+          '20%': { transform: 'translate(-2px, 2px)' },
+          '40%': { transform: 'translate(2px, -2px)' },
+          '60%': { transform: 'translate(-1px, 1px)' },
+          '80%': { transform: 'translate(1px, -1px)' },
+          '100%': { transform: 'translate(0)' },
+        },
+        glitchSlow: {
+          '0%, 100%': { transform: 'translate(0)', opacity: '1' },
+          '5%': { transform: 'translate(-3px, 0)', opacity: '0.8' },
+          '10%': { transform: 'translate(3px, 0)', opacity: '0.6' },
+          '15%': { transform: 'translate(0)', opacity: '1' },
+          '95%': { transform: 'translate(0)', opacity: '1' },
+          '97%': { transform: 'translate(-2px, 0) skewX(-2deg)' },
+          '99%': { transform: 'translate(2px, 0) skewX(2deg)' },
+        },
+        dataStream: {
+          '0%': { transform: 'translateY(-100%)' },
+          '100%': { transform: 'translateY(100%)' },
+        },
+        pulseRing: {
+          '0%': { transform: 'scale(0.5)', opacity: '0.5' },
+          '100%': { transform: 'scale(1.5)', opacity: '0' },
+        },
+        scanBeam: {
+          '0%, 100%': { transform: 'translateY(0) scaleY(0.5)', opacity: '0' },
+          '50%': { transform: 'translateY(100%) scaleY(1)', opacity: '0.3' },
+        },
+        matrixRain: {
+          '0%': { transform: 'translateY(-100%)', opacity: '0' },
+          '10%': { opacity: '1' },
+          '90%': { opacity: '0.5' },
+          '100%': { transform: 'translateY(100%)', opacity: '0' },
+        },
+        terminalBlink: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0' },
+        },
+        cyberSlide: {
+          '0%': { transform: 'translateX(-100%)', opacity: '0' },
+          '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+        reveal: {
+          '0%': { clipPath: 'inset(0 100% 0 0)' },
+          '100%': { clipPath: 'inset(0 0 0 0)' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% center' },
+          '100%': { backgroundPosition: '200% center' },
         },
       },
     },

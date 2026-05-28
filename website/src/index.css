@@ -19,6 +19,14 @@
     background: rgba(0, 255, 65, 0.2);
     color: #00ff41;
   }
+
+  body {
+    cursor: default;
+  }
+
+  a, button, [role="button"] {
+    cursor: pointer;
+  }
 }
 
 @layer components {
@@ -37,6 +45,13 @@
     background-clip: text;
   }
 
+  .text-gradient-amber {
+    background: linear-gradient(135deg, #ffb000 0%, #ff6348 50%, #ff3333 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
   .hacker-gradient {
     background: linear-gradient(135deg, rgba(0, 255, 65, 0.03) 0%, transparent 50%, rgba(0, 212, 255, 0.03) 100%);
   }
@@ -46,6 +61,86 @@
       linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
       linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px);
     background-size: 60px 60px;
+  }
+
+  .terminal-window {
+    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid rgba(0, 255, 65, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .terminal-header {
+    background: rgba(0, 255, 65, 0.05);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid rgba(0, 255, 65, 0.1);
+  }
+
+  .terminal-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .terminal-dot-red { background: #ff3333; }
+  .terminal-dot-yellow { background: #ffb000; }
+  .terminal-dot-green { background: #00ff41; }
+
+  .terminal-body {
+    padding: 16px;
+    font-size: 13px;
+    line-height: 1.7;
+    min-height: 200px;
+  }
+
+  .cyber-card {
+    position: relative;
+    background: rgba(17, 17, 17, 0.8);
+    border: 1px solid rgba(42, 42, 42, 0.5);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .cyber-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.03), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .cyber-card:hover::before {
+    left: 100%;
+  }
+
+  .cyber-card:hover {
+    border-color: rgba(0, 255, 65, 0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 255, 65, 0.1);
+  }
+
+  .scan-line {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scan-line::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(0, 255, 65, 0.1);
+    animation: scanBeam 3s ease-in-out infinite;
   }
 }
 
@@ -63,23 +158,76 @@
   z-index: 9999;
 }
 
-/* Glitch Keyframes */
-@keyframes glitch {
-  0% { transform: translate(0); }
-  20% { transform: translate(-2px, 2px); }
-  40% { transform: translate(2px, -2px); }
-  60% { transform: translate(-1px, 1px); }
-  80% { transform: translate(1px, -1px); }
-  100% { transform: translate(0); }
+/* Terminal cursor blink */
+@keyframes terminalBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
-.glitch {
-  animation: glitch 0.3s ease-in-out;
+/* Data stream columns */
+.data-stream-col {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  animation: dataStream 2s linear infinite;
+  color: rgba(0, 255, 65, 0.15);
+  font-size: 8px;
+  line-height: 1;
+  user-select: none;
 }
 
-/* Typewriter cursor */
-.typing-cursor::after {
-  content: '▊';
-  animation: blink 1s step-end infinite;
-  color: #00ff41;
+/* Glitch text effect */
+.glitch-text {
+  position: relative;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch-text::before {
+  color: #ff3333;
+  z-index: -1;
+  animation: glitchShift 3s infinite;
+}
+
+.glitch-text::after {
+  color: #00d4ff;
+  z-index: -1;
+  animation: glitchShift 3s infinite 0.15s;
+}
+
+@keyframes glitchShift {
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(-2px, 0); opacity: 0.7; }
+  40% { transform: translate(2px, 0); opacity: 0.5; }
+  60% { transform: translate(-1px, 0); }
+  80% { transform: translate(1px, 0); opacity: 0.8; }
+}
+
+/* Shimmer text */
+.shimmer-text {
+  background: linear-gradient(
+    90deg,
+    #00ff41 0%,
+    #00d4ff 25%,
+    #a855f7 50%,
+    #00d4ff 75%,
+    #00ff41 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
 }

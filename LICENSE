@@ -1,21 +1,69 @@
-MIT License
+BUGREAPER X — PROPRIETARY LICENSE
+===================================
+Copyright © 2024-2025 BugReaper X (vanthryx00)
 
-Copyright (c) 2026 BugReaperX
+ALL RIGHTS RESERVED. NOT OPEN SOURCE.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+1. Grant of License
+-------------------
+This software and associated documentation files (the "Software") are
+proprietary and confidential. The author grants you a limited,
+non-exclusive, non-transferable, revocable license to use the Software
+for personal, non-commercial evaluation purposes only.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+2. Restrictions
+---------------
+You may NOT:
+   a) Copy, modify, merge, publish, distribute, sublicense, or sell
+      copies of the Software
+   b) Reverse engineer, decompile, disassemble, or create derivative
+      works from the Software
+   c) Remove, alter, or obscure any proprietary notices or labels
+   d) Use the Software for commercial purposes without explicit
+      written permission
+   e) Host, mirror, or redistribute the Software or any portion
+      thereof
+   f) Use the Software to train AI/ML models or create competing
+      products
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+3. Commercial Licensing
+-----------------------
+Commercial licenses are available. Contact:
+   Email: legal@bugreaper-x.ca
+   Web: https://bugreaper-x.ca/licensing
+
+4. Anti-Tamper & Integrity
+--------------------------
+The Software contains integrity verification and anti-tamper
+mechanisms. Any attempt to disable, bypass, or circumvent these
+mechanisms is strictly prohibited and may result in legal action.
+
+5. Honeypot Systems
+--------------------
+The Software may contain deliberately placed honeypot credentials,
+endpoints, and data designed to detect unauthorized access,
+reverse engineering, or intellectual property theft. Any access to
+or use of these honeypot systems will be logged and may be used
+as evidence in legal proceedings.
+
+6. Disclaimer of Warranty
+--------------------------
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+
+7. Limitation of Liability
+---------------------------
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES,
+OR OTHER LIABILITY ARISING FROM THE USE OF THE SOFTWARE.
+
+8. Termination
+--------------
+This license terminates automatically upon violation of any term.
+Upon termination, you must destroy all copies of the Software.
+
+9. Governing Law
+----------------
+This license shall be governed by the laws of Canada and the
+province of Ontario.
+
+---
+BugReaper X — Sovereign Infrastructure. Zero Compromise.
