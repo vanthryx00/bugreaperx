@@ -1,81 +1,108 @@
-import { Suspense } from 'react'
-import { Canvas } from '@react-three/fiber'
-import { ContactShadows, Stars, OrbitControls } from '@react-three/drei'
-import { useGameStore } from '../../lib/game/store'
-import { MonsterEntity } from './MonsterEntity'
+import { useRef, Suspense } from 'react'
+import { Canvas, useFrame } from '@react-three/fiber'
+import { OrbitControls } from '@react-three/drei'
+import type { OrbitControls as OrbitControlsType } from 'three-stdlib'
+import { EffectComposer, Bloom, DepthOfField, Noise, Vignette } from '@react-three/postprocessing'
+import * as THREE from 'three'
+import { GraphicsEnvironment } from './GraphicsEnvironment'
 
-function Scene() {
-  const monsters = useGameStore(s => s.monsters)
+// ─── Post-Processing Effects ─────────────────────────────────
+function Effects() {
+  return (
+    <EffectComposer>
+      {/* Bloom - high quality with mipmap blur */}
+      <Bloom
+        mipmapBlur
+        intensity={1.2}
+        luminanceThreshold={0.15}
+        luminanceSmoothing={0.7}
+      />
+
+      {/* Secondary bloom for bright objects */}
+      <Bloom
+        intensity={0.5}
+        luminanceThreshold={0.8}
+        luminanceSmoothing={0.3}
+      />
+
+      {/* Depth of field - subtle cinematic blur */}
+      <DepthOfField
+        focusDistance={0.025}
+        focalLength={0.08}
+        bokehScale={3}
+        height={480}
+      />
+
+      {/* Film grain for atmospheric feel */}
+      <Noise opacity={0.03} />
+
+      {/* Dark vignette corners */}
+      <Vignette eskil={false} offset={0.2} darkness={0.8} />
+    </EffectComposer>
+  )
+}
+
+// ─── Camera Controller ──────────────────────────────────────
+function CameraController() {
+  const controlsRef = useRef<OrbitControlsType>(null)
+  const isInteracting = useRef(false)
+
+  useFrame(({ clock }) => {
+    if (controlsRef.current) {
+      const controls = controlsRef.current
+      // Subtle auto-orbit when not interacting
+      if (!isInteracting.current) {
+        controls.target.x = Math.sin(clock.elapsedTime * 0.02) * 0.3
+        controls.target.z = Math.cos(clock.elapsedTime * 0.02) * 0.3
+      }
+    }
+  })
+
+  const handleStart = () => { isInteracting.current = true }
+  const handleEnd = () => { isInteracting.current = false }
 
   return (
+    <OrbitControls
+      ref={controlsRef}
+      enablePan
+      enableZoom
+      enableRotate
+      maxPolarAngle={Math.PI / 2.4}
+      minDistance={3}
+      maxDistance={20}
+      target={[0, 0.5, 0]}
+      dampingFactor={0.05}
+      enableDamping
+      onStart={handleStart}
+      onEnd={handleEnd}
+    />
+  )
+}
+
+// ─── Scene ──────────────────────────────────────────────────
+function Scene() {
+  return (
     <>
-      <ambientLight intensity={0.3} />
-      <directionalLight
-        position={[10, 20, 5]}
-        intensity={0.8}
-        color="#00ff41"
-      />
-      <pointLight position={[-5, 5, -5]} intensity={0.4} color="#339af0" />
-      <pointLight position={[5, 3, 5]} intensity={0.3} color="#cc5de8" />
-
-      <Stars
-        radius={50}
-        depth={30}
-        count={2000}
-        factor={4}
-        saturation={0}
-        fade
-        speed={0.5}
-      />
-
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.5, 0]}>
-        <planeGeometry args={[30, 30]} />
-        <meshStandardMaterial color="#0a0a1a" transparent opacity={0.8} />
-      </mesh>
-      <gridHelper args={[30, 30, '#00ff41', '#00ff41']} position={[0, -0.45, 0]} />
-
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.48, 0]}>
-        <ringGeometry args={[2, 8, 64]} />
-        <meshBasicMaterial color="#00ff41" transparent opacity={0.03} side={2} />
-      </mesh>
-
-      {monsters.map((monster) => (
-        <MonsterEntity key={monster.id} monster={monster} />
-      ))}
-
-      <OrbitControls
-        enablePan={true}
-        enableZoom={true}
-        enableRotate={true}
-        maxPolarAngle={Math.PI / 2.5}
-        minDistance={3}
-        maxDistance={20}
-        target={[0, 0, 0]}
-      />
-
-      <ContactShadows
-        position={[0, -0.4, 0]}
-        opacity={0.4}
-        scale={20}
-        blur={2.5}
-        far={4}
-      />
+      <GraphicsEnvironment />
+      <CameraController />
+      <Effects />
     </>
   )
 }
 
+// ─── Canvas ─────────────────────────────────────────────────
 export function GameCanvas() {
   return (
     <div className="fixed inset-0 top-0 left-0 w-full h-full">
       <Canvas
-        camera={{ position: [8, 6, 8], fov: 60, near: 0.1, far: 100 }}
+        camera={{ position: [8, 5, 8], fov: 55, near: 0.1, far: 100 }}
         gl={{
           antialias: true,
           alpha: true,
           powerPreference: 'high-performance',
-        }}
-        onCreated={({ gl }) => {
-          gl.setClearColor('#0a0a1a')
+          toneMapping: THREE.ACESFilmicToneMapping,
+          toneMappingExposure: 1.2,
+          outputColorSpace: THREE.SRGBColorSpace,
         }}
       >
         <Suspense fallback={null}>
