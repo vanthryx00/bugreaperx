@@ -1,6 +1,7 @@
-import { StrictMode } from 'react'
+import { StrictMode, useState, useEffect, lazy } from 'react'
 import { createRoot } from 'react-dom/client'
-import App from './App'
+import { ErrorBoundary } from './components/ErrorBoundary'
+import { LoadingScreen } from './components/LoadingScreen'
 import './index.css'
 
 // ─── Layer 0: Anti-Clone Bootstrap ─────────────────────────────
@@ -13,7 +14,6 @@ try {
   if (e instanceof Error && e.message === 'BRX_CLONE_DETECTED') {
     throw e
   }
-  // Silently continue — protection layer already handled
 }
 
 // ─── Layer 0.5: Honeypot System ────────────────────────────────
@@ -24,9 +24,31 @@ try {
   // Honeypot initialization silently fails if tampered with
 }
 
-// ─── React Application ─────────────────────────────────────────
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+// ─── Dynamic Import: App (loaded after protection layers) ─────
+const App = lazy(() => import('./App'))
+
+// ─── Root Component ──────────────────────────────────────────
+function Root() {
+  const [ready, setReady] = useState(false)
+
+  useEffect(() => {
+    // Small delay to ensure protection layers initialize
+    const timer = setTimeout(() => setReady(true), 100)
+    return () => clearTimeout(timer)
+  }, [])
+
+  if (!ready) {
+    return <LoadingScreen message="Initializing sovereign infrastructure..." minDisplayMs={1200} />
+  }
+
+  return (
+    <ErrorBoundary>
+      <StrictMode>
+        <App />
+      </StrictMode>
+    </ErrorBoundary>
+  )
+}
+
+// ─── Application Root ─────────────────────────────────────────
+createRoot(document.getElementById('root')!).render(<Root />)

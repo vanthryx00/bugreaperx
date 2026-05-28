@@ -1,0 +1,18 @@
+# ─── BugReaper X — Robots.txt ────────────────────────────────
+# https://bugreaper-x.ca/robots.txt
+#
+# Sovereign bug bounty automation suite.
+# All crawlers welcome.
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://bugreaper-x.ca/sitemap.xml
+
+# Crawl delay for gentle indexing
+Crawl-Delay: 1
+
+# Directories excluded from indexing (internal only)
+Disallow: /assets/
+Disallow: /cdn-cgi/

@@ -91,12 +91,16 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
+          three: ['three', '@react-three/fiber', '@react-three/drei', '@react-three/postprocessing', 'three-stdlib'],
+          game: ['./src/lib/game/store.ts', './src/lib/game/types.ts', './src/lib/game/combat.ts', './src/lib/game/hero.ts', './src/lib/game/monsters.ts', './src/lib/game/weapons.ts', './src/lib/game/armour.ts'],
+          shaders: ['./src/shaders/holographic.ts', './src/shaders/monsterGlitch.ts', './src/shaders/scanlineGround.ts', './src/shaders/particleData.ts', './src/shaders/skyDome.ts'],
           protection: ['./src/lib/honeypot.ts', './src/lib/anticlone.ts'],
         },
+        chunkFileNames: 'assets/[name]-[hash].js',
       },
     },
     // Increase chunk size limit since obfuscation inflates code
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 2000,
   },
   define: {
     __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
