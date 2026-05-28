@@ -17,6 +17,7 @@ const iconMap: Record<string, string> = {
   eye: '◎',
   'file-text': '◻',
   settings: '⚙',
+  zap: '⚡',
 }
 
 export function Sidebar({ activePath, onNavigate }: SidebarProps) {

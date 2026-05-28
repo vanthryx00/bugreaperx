@@ -126,3 +126,46 @@ export interface EthicalBoundary {
   enforced: boolean
   violations: number
 }
+
+// ─── Neurohack Types ───────────────────────────────────────
+export interface NeurohackPhase {
+  id: number
+  type: 'MAP' | 'CONSUME' | 'BUILD' | 'TEST' | 'CONNECT' | 'APPLY' | 'SKIM' | 'EXPLAIN' | 'FILL_GAPS' | 'TEACH' | 'FIND_EXPERT' | 'CLONE_MINIMAL' | 'BREAK_IT' | 'REBUILD_YOURS' | 'SET_IMPOSSIBLE_GOAL' | 'BRUTAL_SIMPLIFY' | 'SKILL_MAP' | 'JUST_IN_TIME_LEARN' | 'ITERATE'
+  name: string
+  description: string
+  duration_min: number
+  action: string
+  output: string
+  completed: boolean
+  output_notes?: string
+}
+
+export interface NeurohackProtocol {
+  id: string
+  name: string
+  description: string
+  duration_hours: number
+  phases: NeurohackPhase[]
+  icon: string
+  color: string
+}
+
+export interface NeurohackSprint {
+  id: string
+  protocol_id: string
+  topic: string
+  started_at: string
+  deadline_hours: number
+  current_phase: number
+  phases: NeurohackPhase[]
+  momentum_score: number
+  completed: boolean
+  completed_at?: string
+}
+
+export interface FrictionItem {
+  id: string
+  label: string
+  checked: boolean
+  icon: string
+}
