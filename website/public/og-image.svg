@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0a0a"/>
+      <stop offset="50%" stop-color="#0d1a0d"/>
+      <stop offset="100%" stop-color="#0a0a0a"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00ff41"/>
+      <stop offset="100%" stop-color="#00cc33"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <!-- Grid pattern -->
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#00ff41" stroke-width="0.5" opacity="0.08"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <!-- Scanline effect -->
+  <pattern id="scanlines" width="1200" height="4" patternUnits="userSpaceOnUse">
+    <rect width="1200" height="1" fill="#00ff41" opacity="0.03"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#scanlines)"/>
+  <!-- Logo icon -->
+  <text x="80" y="280" font-family="monospace" font-size="140" fill="url(#accent)" font-weight="bold">BR</text>
+  <!-- Shield icon -->
+  <text x="80" y="420" font-family="monospace" font-size="36" fill="#00ff41" opacity="0.6">◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈</text>
+  <!-- Title -->
+  <text x="80" y="340" font-family="'Inter', 'Segoe UI', sans-serif" font-size="52" fill="#ffffff" font-weight="800">BugReaper X</text>
+  <!-- Tagline -->
+  <text x="80" y="400" font-family="'Inter', 'Segoe UI', sans-serif" font-size="28" fill="#888888" font-weight="400">Sovereign Bug Bounty Automation Suite</text>
+  <!-- Features -->
+  <text x="80" y="510" font-family="monospace" font-size="20" fill="#00ff41" opacity="0.8">▸ 275 Weapons  ▸ AI-Powered Recon  ▸ One Portable EXE</text>
+  <text x="80" y="545" font-family="monospace" font-size="20" fill="#00ff41" opacity="0.6">▸ Zero Dependencies  ▸ Full Autonomy  ▸ Windows Native</text>
+  <!-- URL -->
+  <text x="960" y="590" font-family="'Inter', 'Segoe UI', sans-serif" font-size="18" fill="#666666" text-anchor="end">bugreaper-x.ca</text>
+  <!-- Decorative corner elements -->
+  <path d="M 1120 20 L 1180 20 L 1180 80" fill="none" stroke="#00ff41" stroke-width="3" opacity="0.4"/>
+  <path d="M 80 610 L 80 550 L 140 550" fill="none" stroke="#00ff41" stroke-width="3" opacity="0.4"/>
+</svg>

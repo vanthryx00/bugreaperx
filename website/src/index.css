@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #2a2a2a #0a0a0a;
+  }
+
+  *::-webkit-scrollbar { width: 6px; }
+  *::-webkit-scrollbar-track { background: #0a0a0a; }
+  *::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
+  *::-webkit-scrollbar-thumb:hover { background: #3a3a3a; }
+
+  html { scroll-behavior: smooth; }
+
+  ::selection {
+    background: rgba(0, 255, 65, 0.2);
+    color: #00ff41;
+  }
+}
+
+@layer components {
+  .glow-border {
+    box-shadow: 0 0 0 1px rgba(0, 255, 65, 0.1);
+    transition: box-shadow 0.3s ease;
+  }
+  .glow-border:hover {
+    box-shadow: 0 0 0 1px rgba(0, 255, 65, 0.3), 0 0 20px rgba(0, 255, 65, 0.1);
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, #00ff41 0%, #00d4ff 50%, #a855f7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hacker-gradient {
+    background: linear-gradient(135deg, rgba(0, 255, 65, 0.03) 0%, transparent 50%, rgba(0, 212, 255, 0.03) 100%);
+  }
+
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+}
+
+/* CRT Scanline Effect */
+.scanline::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: rgba(0, 255, 65, 0.03);
+  animation: scanline 8s linear infinite;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Glitch Keyframes */
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(2px, -2px); }
+  60% { transform: translate(-1px, 1px); }
+  80% { transform: translate(1px, -1px); }
+  100% { transform: translate(0); }
+}
+
+.glitch {
+  animation: glitch 0.3s ease-in-out;
+}
+
+/* Typewriter cursor */
+.typing-cursor::after {
+  content: '▊';
+  animation: blink 1s step-end infinite;
+  color: #00ff41;
+}
