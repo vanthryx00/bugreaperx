@@ -7,6 +7,8 @@ import { PipelinePage } from './pages/Pipeline'
 import { WorkshopPage } from './pages/Workshop'
 import { RepeaterPage } from './pages/Repeater'
 import { McpConsolePage } from './pages/McpConsole'
+import { GodseyePage } from './pages/Godseye'
+import { JarvisPage } from './pages/Jarvis'
 import { SecretsPage } from './pages/Secrets'
 import { ReportsPage } from './pages/Reports'
 import { SettingsPage } from './pages/Settings'
@@ -59,6 +61,8 @@ export default function App() {
       case '/workshop': return <WorkshopPage />
       case '/repeater': return <RepeaterPage />
       case '/mcp': return <McpConsolePage />
+      case '/godseye': return <GodseyePage />
+      case '/jarvis': return <JarvisPage />
       case '/secrets': return <SecretsPage />
       case '/reports': return <ReportsPage />
       case '/settings': return <SettingsPage />
