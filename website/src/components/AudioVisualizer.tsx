@@ -157,11 +157,11 @@ export function AudioVisualizerBar() {
   if (!isPlaying) return null
 
   return (
-    <div className={`fixed bottom-0 left-0 right-0 z-[9998] transition-all duration-300 ${expanded ? 'h-48' : 'h-10'}`}>
+    <div className={`fixed bottom-0 left-0 right-0 z-[9998] pointer-events-none transition-all duration-300 ${expanded ? 'h-48' : 'h-10'}`}>
       {/* Hit area to expand */}
       <button
         onClick={() => setExpanded(!expanded)}
-        className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-t bg-hacker-surface2/80 border border-hacker-border/30 text-[8px] font-mono text-hacker-text-dim/40 hover:text-hacker-green transition-colors z-10"
+        className="pointer-events-auto absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-t bg-hacker-surface2/80 border border-hacker-border/30 text-[8px] font-mono text-hacker-text-dim/40 hover:text-hacker-green transition-colors z-10"
       >
         {expanded ? '▼ Collapse' : '▲ Visualizer'}
       </button>

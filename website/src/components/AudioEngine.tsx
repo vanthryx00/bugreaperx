@@ -346,6 +346,9 @@ export function AudioEngineProvider({ children }: { children: ReactNode }) {
       setIsPlaying(false)
       return
     }
+    // Prevent race if already initializing
+    if (isInitializingRef.current) return
+    isInitializingRef.current = true
     // Default to beta on play
     const engine = new BinauralEngine()
     engine.init().then(() => {
@@ -353,6 +356,8 @@ export function AudioEngineProvider({ children }: { children: ReactNode }) {
       engine.start('beta')
       setModeState('beta')
       setIsPlaying(true)
+    }).finally(() => {
+      isInitializingRef.current = false
     })
   }, [isPlaying])
 

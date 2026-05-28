@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useAudioEngine, BRAINWAVE_MODES, type BrainwaveMode } from './AudioEngine'
+import { AudioMiniVisualizer } from './AudioVisualizer'
 
 export function AudioToggle() {
   const { mode, isPlaying, volume, setMode, togglePlay, setVolume } = useAudioEngine()
@@ -22,7 +23,7 @@ export function AudioToggle() {
   const currentConfig = mode !== 'off' ? BRAINWAVE_MODES[mode] : null
 
   return (
-    <div ref={panelRef} className="fixed bottom-6 right-6 z-[9999]">
+    <div ref={panelRef} className="fixed bottom-16 right-6 z-[9999]">
       {/* Main Toggle Button */}
       <button
         onClick={() => setExpanded(!expanded)}
@@ -62,6 +63,13 @@ export function AudioToggle() {
               <p className="text-[10px] font-mono text-hacker-text-dim/60 mt-1">{currentConfig.desc}</p>
             )}
           </div>
+
+          {/* Mini Visualizer */}
+          {isPlaying && (
+            <div className="px-4 py-2 border-b border-hacker-border/20 flex items-center justify-center">
+              <AudioMiniVisualizer />
+            </div>
+          )}
 
           {/* Mode Selector */}
           <div className="px-4 py-3 border-b border-hacker-border/20">
