@@ -2,6 +2,7 @@
   "name": "bugreaper-desktop",
   "version": "4.0.0",
   "description": "BugReaper X — Sovereign Windows Standalone Bug Bounty Automation Suite",
+  "type": "module",
   "main": "dist-electron/main.js",
   "scripts": {
     "dev": "vite",
